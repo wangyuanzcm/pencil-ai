@@ -1,0 +1,22 @@
+{
+  "name": "pencil-monorepo",
+  "private": true,
+  "packageManager": "pnpm@10.31.0",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "start": "pnpm --filter pencil start",
+    "dev": "pnpm -r --if-present dev",
+    "build": "pnpm -r --if-present build",
+    "lint": "pnpm -r --if-present lint",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "test": "pnpm -r --if-present test"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "electron",
+      "esbuild"
+    ]
+  }
+}
