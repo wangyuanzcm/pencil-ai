@@ -1,22 +1,19 @@
 {
-  "name": "pencil-monorepo",
+  "name": "my-monorepo",
   "private": true,
-  "packageManager": "pnpm@10.31.0",
-  "workspaces": [
-    "packages/*"
-  ],
   "scripts": {
-    "start": "pnpm --filter pencil start",
-    "dev": "pnpm -r --if-present dev",
-    "build": "pnpm -r --if-present build",
-    "lint": "pnpm -r --if-present lint",
-    "typecheck": "pnpm -r --if-present typecheck",
-    "test": "pnpm -r --if-present test"
+    "dev:desktop": "pnpm --filter @app/desktop dev",
+    "build:desktop": "pnpm --filter @app/desktop build"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "turbo": "latest"
   },
   "pnpm": {
-    "onlyBuiltDependencies": [
-      "electron",
-      "esbuild"
-    ]
-  }
+    "onlyBuiltDependencies": ["electron", "esbuild"]
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
 }
