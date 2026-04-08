@@ -1,3 +1,14 @@
 node_modules
 **/*/node_modules
+**/*/node_modules/.bin
 source/*
+**/*/dist
+**/**/out
+**/dist/*/*
+apps/desktop/dist
+app-desktop-*.tgz
+apps/desktop/out
+packages/*/dist
+packages/*/out
+packages/*/node_modules
+packages/*/node_modules/.bin
