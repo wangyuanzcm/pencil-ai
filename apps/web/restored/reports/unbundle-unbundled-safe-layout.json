@@ -1,0 +1,99 @@
+{
+  "generatedAt": "2026-04-10T16:50:14.048Z",
+  "outDir": "D:\\local_workspace\\design-ai\\apps\\web\\src\\restored\\unbundled-safe",
+  "packedFiles": 23,
+  "files": [
+    {
+      "file": "index.js",
+      "category": "entry"
+    },
+    {
+      "file": "vendor/react-router/chunk-000.js",
+      "category": "vendor/react-router"
+    },
+    {
+      "file": "vendor/sentry/chunk-000.js",
+      "category": "vendor/sentry"
+    },
+    {
+      "file": "vendor/posthog/chunk-000.js",
+      "category": "vendor/posthog"
+    },
+    {
+      "file": "vendor/pixi/chunk-000.js",
+      "category": "vendor/pixi"
+    },
+    {
+      "file": "app/chunk-000.js",
+      "category": "app"
+    },
+    {
+      "file": "app/chunk-001.js",
+      "category": "app"
+    },
+    {
+      "file": "app/chunk-002.js",
+      "category": "app"
+    },
+    {
+      "file": "app/chunk-003.js",
+      "category": "app"
+    },
+    {
+      "file": "app/chunk-004.js",
+      "category": "app"
+    },
+    {
+      "file": "app/chunk-005.js",
+      "category": "app"
+    },
+    {
+      "file": "app/chunk-006.js",
+      "category": "app"
+    },
+    {
+      "file": "app/chunk-007.js",
+      "category": "app"
+    },
+    {
+      "file": "app/chunk-008.js",
+      "category": "app"
+    },
+    {
+      "file": "app/chunk-009.js",
+      "category": "app"
+    },
+    {
+      "file": "app/chunk-010.js",
+      "category": "app"
+    },
+    {
+      "file": "app/chunk-011.js",
+      "category": "app"
+    },
+    {
+      "file": "app/chunk-012.js",
+      "category": "app"
+    },
+    {
+      "file": "app/chunk-013.js",
+      "category": "app"
+    },
+    {
+      "file": "app/chunk-014.js",
+      "category": "app"
+    },
+    {
+      "file": "app/chunk-015.js",
+      "category": "app"
+    },
+    {
+      "file": "app/chunk-016.js",
+      "category": "app"
+    },
+    {
+      "file": "app/chunk-017.js",
+      "category": "app"
+    }
+  ]
+}

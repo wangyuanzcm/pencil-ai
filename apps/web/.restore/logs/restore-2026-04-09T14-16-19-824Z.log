@@ -1,0 +1,72 @@
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Progress: resolved 793, reused 0, downloaded 0, added 0
+ WARN  6 deprecated subdependencies found: boolean@3.2.0, glob@10.5.0, glob@7.2.3, inflight@1.0.6, lodash.isequal@4.5.0, rimraf@2.6.3
+Progress: resolved 819, reused 0, downloaded 0, added 0, done
+╭ Warning ─────────────────────────────────────────────────────────────────────╮
+│                                                                              │
+│   Ignored build scripts: electron-winstaller@5.4.0.                          │
+│   Run "pnpm approve-builds" to pick which dependencies should be allowed     │
+│   to run scripts.                                                            │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+Done in 2.1s using pnpm v10.33.0
+
+> design-ai-web@0.1.0 typecheck D:\local_workspace\design-ai\apps\web
+> tsc -p tsconfig.json --noEmit
+
+
+> design-ai-web@0.1.0 test D:\local_workspace\design-ai\apps\web
+> vitest run
+
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mD:/local_workspace/design-ai/apps/web[39m
+
+ [32m✓[39m tests/inventory.test.ts [2m([22m[2m1 test[22m[2m)[22m[90m 63[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m   Start at [22m 22:16:24
+[2m   Duration [22m 888ms[2m (transform 64ms, setup 0ms, collect 85ms, tests 63ms, environment 0ms, prepare 284ms)[22m
+
+
+> design-ai-web@0.1.0 test:integration D:\local_workspace\design-ai\apps\web
+> node scripts/integration-check.mjs
+
+{
+  "ok": true
+}
+
+> design-ai-web@0.1.0 prebuild D:\local_workspace\design-ai\apps\web
+> pnpm sync:desktop-assets
+
+
+> design-ai-web@0.1.0 sync:desktop-assets D:\local_workspace\design-ai\apps\web
+> node scripts/sync-desktop-assets.mjs
+
+{
+  "ok": true,
+  "copied": 7,
+  "from": "D:\\local_workspace\\design-ai\\apps\\desktop\\src\\renderer\\assets",
+  "to": "D:\\local_workspace\\design-ai\\apps\\web\\public\\desktop-assets",
+  "files": [
+    "browserAll.js",
+    "browserAll2.js",
+    "index.css",
+    "index.js",
+    "pencil.wasm",
+    "webworkerAll.js",
+    "webworkerAll2.js"
+  ]
+}
+
+> design-ai-web@0.1.0 build D:\local_workspace\design-ai\apps\web
+> vite build
+
+[36mvite v5.4.21 [32mbuilding for production...[36m[39m
+transforming...
+[32m✓[39m 42 modules transformed.
+rendering chunks...
+computing gzip size...
+[2mdist/[22m[32mindex.html                [39m[1m[2m  0.34 kB[22m[1m[22m[2m │ gzip:  0.25 kB[22m
+[2mdist/[22m[36massets/index-CpD6XMyp.js  [39m[1m[2m272.58 kB[22m[1m[22m[2m │ gzip: 87.18 kB[22m[2m │ map: 1,388.98 kB[22m
+[32m✓ built in 1.11s[39m

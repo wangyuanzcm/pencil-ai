@@ -1,0 +1,166 @@
+{
+  "generatedAt": "2026-04-11T00:51:30.000Z",
+  "project": "design-ai-web",
+  "status": "in_progress",
+  "goal": "将 desktop renderer 的 index.js 巨型 bundle 解包为可维护的 src 模块，并逐块把内联 vendor 替换为 npm 依赖导入，保持 typecheck/test/build/perf 回归门禁通过",
+  "entry": {
+    "currentRuntimeEntry": "apps/web/src/App.tsx -> import('./restored/unbundled-safe/index.js')",
+    "generator": "apps/web/scripts/unbundle-build-src-safe.mjs",
+    "inputBundle": "apps/web/public/restored/renderer-bundle/index.js",
+    "outputDir": "apps/web/src/restored/unbundled-safe"
+  },
+  "vendorExternalized": [
+    {
+      "category": "vendor/react-router",
+      "chunkFile": "apps/web/src/restored/unbundled-safe/vendor/react-router/chunk-000.js",
+      "externalModule": "apps/web/src/vendor/react-router/index.ts",
+      "npmDeps": ["react-router-dom"],
+      "exportSurface": ["Eze", "xge"]
+    }
+  ],
+  "vendorAdaptersPresentButNotActivated": [
+    {
+      "category": "vendor/posthog",
+      "adapterModule": "apps/web/src/vendor/posthog/index.ts",
+      "reason": "在优化 entry 合并策略后，vendor/posthog chunk 对外暴露的内部符号显著增多（例如 by/xt/GLe 等），完全替换为 npm 需要更大范围的符号映射；当前保持 chunk 内联实现以确保 build 不漂移"
+    },
+    {
+      "category": "vendor/sentry",
+      "adapterModule": "apps/web/src/vendor/sentry/index.ts",
+      "reason": "在优化 entry 合并策略后，vendor/sentry chunk 对外暴露的内部符号显著增多（例如 ZP 等），完全替换为 npm 需要更大范围的符号映射；当前保持 chunk 内联实现以确保 build 不漂移"
+    }
+  ],
+  "reactExternalized": [
+    {
+      "area": "jsx-runtime",
+      "where": "apps/web/scripts/unbundle-build-src-safe.mjs -> externalizeReactJsxRuntime()",
+      "result": "对所有生成文件应用 JSX runtime 外部化：用 react/jsx-runtime 导入替换内联实现，并保持 r4/jsx/jsxs/Fragment 或 y.jsx/y.jsxs/y.Fragment 兼容对象"
+    },
+    {
+      "area": "react-dom-client",
+      "where": "apps/web/scripts/unbundle-build-src-safe.mjs -> externalizeReactDomClient()",
+      "result": "将 react-dom-client.production.js 的 zLe() 包装函数改为返回 npm 的 react-dom/client 模块（ReactDOMClient），避免继续依赖内联实现"
+    },
+    {
+      "area": "react-core",
+      "where": "apps/web/scripts/unbundle-build-src-safe.mjs -> externalizeReactCore()",
+      "result": "对所有生成文件应用 React 本体外部化：将 RLe/JW 包装函数替换为 npm 的 react 模块（React），减少内联实现并保持 M=JW() 行为一致"
+    },
+    {
+      "area": "react-dom",
+      "where": "apps/web/scripts/unbundle-build-src-safe.mjs -> externalizeReactDom()",
+      "result": "对包含 jLe() ReactDOM 包装函数的文件外部化 ReactDOM：用 npm 的 react-dom 模块（ReactDOM）替换内联实现，保留 createPortal/flushSync/preinit 等 API 行为"
+    }
+  ],
+  "generatorNotes": [
+    "unbundle-build-src-safe: entry 仅与 entryCode 的写入目标合并（entryWriteTargets），减少 entry 过度膨胀，便于后续 vendor 拆分",
+    "unbundle-build-src-safe: 对位于子目录的 chunk 重写对根目录 browserAll*/webworkerAll* 的相对导入，防止 Rollup 无法解析"
+  ],
+  "vendorCoverage": {
+    "source": "apps/web/restored/reports/vendor-eval.json",
+    "summary": [
+      { "category": "react-router", "covered": true },
+      { "category": "posthog", "covered": false },
+      { "category": "sentry", "covered": false },
+      { "category": "pixi", "covered": false }
+    ]
+  },
+  "businessRestoration": [
+    {
+      "area": "scenegraph.document.upgrade",
+      "newModules": [
+        "apps/web/src/features/scenegraph/document/upgrade.ts",
+        "apps/web/src/features/scenegraph/document/uuid.ts"
+      ],
+      "exportsFromFeatureEntry": "apps/web/src/features/scenegraph/index.ts",
+      "notes": [
+        "已将文档版本升级流水线（1.0->2.10）从 chunk-009 的 bundle 依赖中抽出为可维护 TS 模块",
+        "保留 loadScenegraphModule() 作为重渲染/Skia/Pixi 相关运行时模块的懒加载入口"
+      ],
+      "tests": ["apps/web/tests/scenegraph-upgrade.test.ts"]
+    },
+    {
+      "area": "scenegraph.document.uri",
+      "newModules": ["apps/web/src/features/scenegraph/document/uri.ts"],
+      "notes": [
+        "已将 chunk-009 中的 URI/Path 工具抽出为可维护 TS 模块，并在 unbundle-build-src-safe 中注入 import + wrapper，保持 chunk 的 export surface 不变"
+      ],
+      "tests": ["apps/web/tests/scenegraph-uri.test.ts"]
+    },
+    {
+      "area": "scenegraph.node.schema",
+      "newModules": ["apps/web/src/features/scenegraph/document/schema.ts"],
+      "exportsFromFeatureEntry": "apps/web/src/features/scenegraph/index.ts",
+      "notes": [
+        "先以类型定义 + 纯函数映射落地：提供 NodeType/NodePropertyKey 常量与 type guard，并整理 overriddenProperties -> serialized override key 的映射（不引入渲染依赖）"
+      ],
+      "tests": ["apps/web/tests/scenegraph-schema.test.ts"]
+    },
+    {
+      "area": "chat.facade",
+      "newModules": ["apps/web/src/features/chat/index.tsx"],
+      "notes": [
+        "提供 ChatPanel/ChatMessage/ToolUse 等业务 UI 的 React.lazy 门面，并补齐最小可用 props 类型（selectedIDs/chatManager 形态）"
+      ]
+    },
+    {
+      "area": "chat.utils",
+      "newModules": ["apps/web/src/features/chat/utils.ts"],
+      "notes": [
+        "抽出纯函数：通知开关判定、prompt 历史导航（ArrowUp/ArrowDown）、tab 循环索引等，便于后续从 chunk 内部逐步替换"
+      ],
+      "tests": ["apps/web/tests/chat-utils.test.ts"]
+    },
+    {
+      "area": "scenegraph.document.value",
+      "newModules": ["apps/web/src/features/scenegraph/document/value.ts"],
+      "exportsFromFeatureEntry": "apps/web/src/features/scenegraph/index.ts",
+      "notes": [
+        "将 chunk-004/chunk-009 中的属性值层规则抽为纯函数：rotation 的 sign-flip deg<->rad、sizing 的 fit_content/fill_container fallback 序列化规则，并补齐 fill/stroke/effect 的序列化结构类型（不引入渲染依赖）"
+      ],
+      "tests": ["apps/web/tests/scenegraph-value.test.ts"]
+    },
+    {
+      "area": "scenegraph.document.nodeProperties",
+      "newModules": ["apps/web/src/features/scenegraph/document/node-properties.ts"],
+      "exportsFromFeatureEntry": "apps/web/src/features/scenegraph/index.ts",
+      "notes": [
+        "扩展 v2.10 序列化节点反序列化的纯函数覆盖：width/height 的 sizing 行为、rotation deg->rad（sign-flip）、opacity、text/note/prompt/context 文本字段、layout（layout/gap/padding/justifyContent/alignItems/includeStroke）与 layoutPosition、icon_font（weight/fill）、path（fillRule），并补齐 fill/stroke/effect 的结构校验与透传（不引入渲染依赖），提供 override key 收集辅助函数"
+      ],
+      "tests": ["apps/web/tests/scenegraph-node-properties.test.ts"]
+    },
+    {
+      "area": "scenegraph.document.overrides",
+      "newModules": ["apps/web/src/features/scenegraph/document/overrides.ts"],
+      "exportsFromFeatureEntry": "apps/web/src/features/scenegraph/index.ts",
+      "notes": [
+        "引入 ref.descendants 的 overrides 解析纯函数：将 descendants 的序列化键（content/layout/gap/padding/weight/fill/stroke/effect/geometry 等）反序列化为可合并的 properties patch，并提供 patch 应用/批量应用与 descendants->patches 的转换工具；支持可选变量解析器（$var），并对 width/height 的变量引用提供可解析路径"
+      ],
+      "tests": ["apps/web/tests/scenegraph-overrides.test.ts"]
+    }
+  ],
+  "reportsAndArtifacts": {
+    "layout": "apps/web/restored/reports/unbundle-unbundled-safe-layout.json",
+    "unbundlePlan": "apps/web/restored/reports/unbundle-plan.json",
+    "unbundleScan": "apps/web/restored/reports/unbundle-scan.json",
+    "unbundleExports": "apps/web/restored/reports/unbundle-exports.json",
+    "migrationManifest": "apps/web/restored/reports/migration-manifest.json",
+    "diffReport": "apps/web/restored/reports/diff-report.json",
+    "unitTestReport": "apps/web/restored/reports/unit-test-report.json",
+    "perfBaseline": "apps/web/perf-baseline.json"
+  },
+  "qualityGates": {
+    "commands": [
+      "pnpm --filter design-ai-web unbundle:build-src-safe",
+      "pnpm --filter design-ai-web typecheck",
+      "pnpm --filter design-ai-web test",
+      "pnpm --filter design-ai-web build",
+      "pnpm --filter design-ai-web perf:check"
+    ],
+    "lastKnownState": "passed"
+  },
+  "nextSteps": [
+    "继续业务还原：将 overrides 的 patch 应用接入实例/ref.descendants 的运行时流水线（chunk-009 的 Oj/related），优先保持变量引用（$var）语义一致，并以单测锁住关键分支",
+    "保持门禁：每步都跑 typecheck/test/build/perf，并更新本快照"
+  ]
+}

@@ -1,0 +1,147 @@
+{
+  "ok": true,
+  "runId": "2026-04-09T14-19-22-783Z",
+  "startedAt": "2026-04-09T14:19:22.787Z",
+  "endedAt": "2026-04-09T14:19:46.710Z",
+  "elapsedMs": 23927,
+  "inventory": {
+    "generatedAt": "2026-04-09T14:19:22.829Z",
+    "desktopAssetsDir": "D:\\local_workspace\\design-ai\\apps\\desktop\\src\\renderer\\assets",
+    "missing": [],
+    "bundles": {
+      "entry": "index.js",
+      "viteDepFiles": [
+        "./browserAll.js",
+        "./webworkerAll.js",
+        "./browserAll2.js",
+        "./webworkerAll2.js"
+      ]
+    },
+    "dependencyGraph": {
+      "index.js": [],
+      "webworkerAll2.js": [],
+      "browserAll2.js": [],
+      "browserAll.js": [],
+      "webworkerAll.js": []
+    },
+    "thirdParty": [
+      {
+        "name": "react",
+        "version": "19.2.0",
+        "evidence": {
+          "file": "index.js",
+          "match": "Gr.version=\"19.2.0\""
+        }
+      },
+      {
+        "name": "react-router",
+        "version": "7.8.2",
+        "evidence": {
+          "file": "index.js",
+          "match": "react-router v7.8.2"
+        }
+      },
+      {
+        "name": "sentry-js",
+        "version": "10.22.0",
+        "evidence": {
+          "file": "index.js",
+          "match": "Lx=\"10.22.0\""
+        }
+      },
+      {
+        "name": "pixi",
+        "version": "8.8.0",
+        "evidence": {
+          "file": "webworkerAll2.js",
+          "match": "G(\"v8.8.0\""
+        }
+      }
+    ],
+    "assets": [
+      {
+        "path": "browserAll.js",
+        "size": 705,
+        "md5": "eb985e2ff92ee2d8f0f18b42116218f4"
+      },
+      {
+        "path": "browserAll2.js",
+        "size": 43078,
+        "md5": "19d9b10ca9738250ecac478b40f37209"
+      },
+      {
+        "path": "index.css",
+        "size": 141995,
+        "md5": "e34e01f3cb7674176914b4043f4c2991"
+      },
+      {
+        "path": "index.js",
+        "size": 5320053,
+        "md5": "96e55a676114e2c48bff7217d3022102"
+      },
+      {
+        "path": "pencil.wasm",
+        "size": 9278574,
+        "md5": "f4d5a4b8c0c2a72d1089e1a74dcc0ed7"
+      },
+      {
+        "path": "webworkerAll.js",
+        "size": 835,
+        "md5": "4feefa7d402bdc3917435253b51b9633"
+      },
+      {
+        "path": "webworkerAll2.js",
+        "size": 183667,
+        "md5": "dd8d7e7aa44914bc7685f86e9ecfaedc"
+      }
+    ]
+  },
+  "packagePlan": {
+    "desired": {
+      "react": "19.2.0",
+      "react-dom": "19.2.0",
+      "react-router-dom": "7.8.2",
+      "pixi.js": "8.8.0"
+    },
+    "changes": []
+  },
+  "steps": [
+    {
+      "name": "inventory",
+      "ok": true
+    },
+    {
+      "name": "backup",
+      "ok": true
+    },
+    {
+      "name": "align-deps",
+      "ok": true
+    },
+    {
+      "name": "pnpm-install",
+      "ok": true
+    },
+    {
+      "name": "typecheck",
+      "ok": true
+    },
+    {
+      "name": "tests",
+      "ok": true
+    },
+    {
+      "name": "integration",
+      "ok": true
+    },
+    {
+      "name": "build",
+      "ok": true
+    },
+    {
+      "name": "perf",
+      "ok": true
+    }
+  ],
+  "rollback": null
+}

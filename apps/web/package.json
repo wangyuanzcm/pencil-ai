@@ -1,0 +1,52 @@
+{
+  "name": "design-ai-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "predev": "pnpm unbundle:build-src-safe",
+    "restore": "node scripts/restore.mjs",
+    "sync:desktop-assets": "node scripts/sync-desktop-assets.mjs",
+    "decompile:assets": "node scripts/decompile-assets.mjs",
+    "unbundle:plan": "node scripts/unbundle-plan.mjs",
+    "unbundle:exports": "node scripts/unbundle-exports.mjs",
+    "unbundle:scan": "node scripts/unbundle-scan.mjs",
+    "unbundle:build-src": "node scripts/unbundle-build-src.mjs",
+    "unbundle:build-src-safe": "node scripts/unbundle-build-src-safe.mjs",
+    "unbundle:eval-vendor": "node scripts/unbundle-eval-vendor.mjs",
+    "prebuild": "pnpm unbundle:build-src-safe",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:report": "vitest run --reporter=json --outputFile restored/reports/unit-test-report.json",
+    "test:integration": "node scripts/integration-check.mjs",
+    "perf:baseline": "pnpm build && node scripts/perf-check.mjs --update-baseline",
+    "perf:check": "pnpm build && node scripts/perf-check.mjs",
+    "land:assets": "node scripts/land-assets.mjs"
+  },
+  "dependencies": {
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "react-router-dom": "7.8.2",
+    "@sentry/react": "^8.29.0",
+    "pixi.js": "8.8.0",
+    "posthog-js": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.10",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "acorn": "^8.14.1",
+    "acorn-walk": "^8.3.4",
+    "typescript": "^5.6.2",
+    "vite": "^5.2.0",
+    "vitest": "^2.1.8"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

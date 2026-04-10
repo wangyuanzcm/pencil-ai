@@ -1,0 +1,117 @@
+{
+  "generatedAt": "2026-04-09T15:18:06.393Z",
+  "input": "D:\\local_workspace\\design-ai\\apps\\web\\public\\restored\\renderer-bundle\\index.js",
+  "sizeBytes": 5320053,
+  "detectedModules": 1,
+  "detectedModuleObjects": 17,
+  "edges": [],
+  "topByIncoming": [
+    {
+      "name": "s6t",
+      "flag": "ece",
+      "exportVar": "C6",
+      "start": 3900314,
+      "end": 3900749,
+      "in": 0,
+      "out": 0
+    }
+  ],
+  "modules": [
+    {
+      "name": "s6t",
+      "flag": "ece",
+      "exportVar": "C6",
+      "start": 3900314,
+      "end": 3900749,
+      "in": 0,
+      "out": 0
+    }
+  ],
+  "moduleObjects": [
+    {
+      "name": "xL",
+      "start": 2983,
+      "end": 2998
+    },
+    {
+      "name": "PL",
+      "start": 82004,
+      "end": 82019
+    },
+    {
+      "name": "RL",
+      "start": 91071,
+      "end": 91086
+    },
+    {
+      "name": "IL",
+      "start": 91093,
+      "end": 91108
+    },
+    {
+      "name": "DL",
+      "start": 95064,
+      "end": 95079
+    },
+    {
+      "name": "eB",
+      "start": 479075,
+      "end": 479090
+    },
+    {
+      "name": "nB",
+      "start": 505891,
+      "end": 505906
+    },
+    {
+      "name": "iB",
+      "start": 651720,
+      "end": 651735
+    },
+    {
+      "name": "yj",
+      "start": 2123892,
+      "end": 2123907
+    },
+    {
+      "name": "vj",
+      "start": 2124715,
+      "end": 2124730
+    },
+    {
+      "name": "wj",
+      "start": 2127718,
+      "end": 2127733
+    },
+    {
+      "name": "Fj",
+      "start": 2900821,
+      "end": 2900836
+    },
+    {
+      "name": "Dz",
+      "start": 4303822,
+      "end": 4303837
+    },
+    {
+      "name": "p9",
+      "start": 4597598,
+      "end": 4597613
+    },
+    {
+      "name": "RC",
+      "start": 4605818,
+      "end": 4605833
+    },
+    {
+      "name": "IC",
+      "start": 4615556,
+      "end": 4615571
+    },
+    {
+      "name": "LC",
+      "start": 5172724,
+      "end": 5172739
+    }
+  ]
+}

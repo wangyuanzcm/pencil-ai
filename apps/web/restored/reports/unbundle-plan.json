@@ -1,0 +1,391 @@
+{
+  "generatedAt": "2026-04-09T15:14:09.276Z",
+  "input": {
+    "desktopAssetsDir": "D:\\local_workspace\\design-ai\\apps\\desktop\\src\\renderer\\assets",
+    "publicBundleDir": "D:\\local_workspace\\design-ai\\apps\\web\\public\\restored\\renderer-bundle"
+  },
+  "inventory": {
+    "missing": [],
+    "thirdParty": [
+      {
+        "name": "react",
+        "version": "19.2.0",
+        "evidence": {
+          "file": "index.js",
+          "match": "Gr.version=\"19.2.0\""
+        }
+      },
+      {
+        "name": "react-router",
+        "version": "7.8.2",
+        "evidence": {
+          "file": "index.js",
+          "match": "react-router v7.8.2"
+        }
+      },
+      {
+        "name": "sentry-js",
+        "version": "10.22.0",
+        "evidence": {
+          "file": "index.js",
+          "match": "Lx=\"10.22.0\""
+        }
+      },
+      {
+        "name": "pixi",
+        "version": "8.8.0",
+        "evidence": {
+          "file": "webworkerAll2.js",
+          "match": "G(\"v8.8.0\""
+        }
+      }
+    ],
+    "bundles": {
+      "entry": "index.js",
+      "viteDepFiles": [
+        "./browserAll.js",
+        "./webworkerAll.js",
+        "./browserAll2.js",
+        "./webworkerAll2.js"
+      ]
+    }
+  },
+  "current": {
+    "files": [
+      {
+        "file": "browserAll.js",
+        "from": "D:\\local_workspace\\design-ai\\apps\\desktop\\src\\renderer\\assets\\browserAll.js",
+        "to": "D:\\local_workspace\\design-ai\\apps\\web\\public\\restored\\renderer-bundle\\browserAll.js",
+        "block": "renderer-bundle/pixi-plugins/browser"
+      },
+      {
+        "file": "browserAll2.js",
+        "from": "D:\\local_workspace\\design-ai\\apps\\desktop\\src\\renderer\\assets\\browserAll2.js",
+        "to": "D:\\local_workspace\\design-ai\\apps\\web\\public\\restored\\renderer-bundle\\browserAll2.js",
+        "block": "renderer-bundle/pixi-plugins/browser"
+      },
+      {
+        "file": "index.css",
+        "from": "D:\\local_workspace\\design-ai\\apps\\desktop\\src\\renderer\\assets\\index.css",
+        "to": "D:\\local_workspace\\design-ai\\apps\\web\\public\\restored\\renderer-bundle\\index.css",
+        "block": "static/style"
+      },
+      {
+        "file": "index.js",
+        "from": "D:\\local_workspace\\design-ai\\apps\\desktop\\src\\renderer\\assets\\index.js",
+        "to": "D:\\local_workspace\\design-ai\\apps\\web\\public\\restored\\renderer-bundle\\index.js",
+        "block": "renderer-bundle/entry"
+      },
+      {
+        "file": "pencil.wasm",
+        "from": "D:\\local_workspace\\design-ai\\apps\\desktop\\src\\renderer\\assets\\pencil.wasm",
+        "to": "D:\\local_workspace\\design-ai\\apps\\web\\public\\restored\\renderer-bundle\\pencil.wasm",
+        "block": "static/wasm"
+      },
+      {
+        "file": "webworkerAll.js",
+        "from": "D:\\local_workspace\\design-ai\\apps\\desktop\\src\\renderer\\assets\\webworkerAll.js",
+        "to": "D:\\local_workspace\\design-ai\\apps\\web\\public\\restored\\renderer-bundle\\webworkerAll.js",
+        "block": "renderer-bundle/pixi-plugins/worker"
+      },
+      {
+        "file": "webworkerAll2.js",
+        "from": "D:\\local_workspace\\design-ai\\apps\\desktop\\src\\renderer\\assets\\webworkerAll2.js",
+        "to": "D:\\local_workspace\\design-ai\\apps\\web\\public\\restored\\renderer-bundle\\webworkerAll2.js",
+        "block": "renderer-bundle/pixi-plugins/worker"
+      }
+    ],
+    "indexJs": {
+      "sizeBytes": 5320053,
+      "anchors": [
+        {
+          "name": "vite-map-deps",
+          "match": "__vite__mapDeps",
+          "index": 6
+        },
+        {
+          "name": "react-license",
+          "match": "@license React",
+          "index": 3013
+        },
+        {
+          "name": "sentry-version",
+          "match": "Lx=\"10.22.0\"",
+          "index": 3788
+        },
+        {
+          "name": "react-router",
+          "match": "react-router v7.8.2",
+          "index": 441273
+        },
+        {
+          "name": "lodash-license",
+          "match": "* Lodash <https://lodash.com/>",
+          "index": 5172759
+        }
+      ],
+      "exportSnippet": {
+        "found": true,
+        "snippet": "export{DRt as $,JUe as A,Bxe as B,la as C,E1e as D,P1e as E,KVe as F,zwe as G,Xxe as H,U7e as I,ql as J,Wg as K,dv as L,rxe as M,xxe as N,rIt as O,qg as P,NR as Q,Bye as R,dIt as S,h9 as T,zq as U,PKt as V,tde as W,_7e as X,V6 as Y,pIt as Z,bIt as _,QUe as a,Qu as b,Av as c,z_ as d,Ko as e,LJ as f,Fye as g,K$ as h,dxe as i,hxe as j,n_e as k,t_e as l,zxe as m,Pxe as n,K1e as o,Y1e as p,BJ as q,XRt as r,Vy as s,RRt as t,F1 as u,M5 as v,X1 as w,qRt as x,zl as y,qs as z};\r\n"
+      },
+      "exports": [
+        {
+          "local": "DRt",
+          "exported": "$"
+        },
+        {
+          "local": "JUe",
+          "exported": "A"
+        },
+        {
+          "local": "Bxe",
+          "exported": "B"
+        },
+        {
+          "local": "la",
+          "exported": "C"
+        },
+        {
+          "local": "E1e",
+          "exported": "D"
+        },
+        {
+          "local": "P1e",
+          "exported": "E"
+        },
+        {
+          "local": "KVe",
+          "exported": "F"
+        },
+        {
+          "local": "zwe",
+          "exported": "G"
+        },
+        {
+          "local": "Xxe",
+          "exported": "H"
+        },
+        {
+          "local": "U7e",
+          "exported": "I"
+        },
+        {
+          "local": "ql",
+          "exported": "J"
+        },
+        {
+          "local": "Wg",
+          "exported": "K"
+        },
+        {
+          "local": "dv",
+          "exported": "L"
+        },
+        {
+          "local": "rxe",
+          "exported": "M"
+        },
+        {
+          "local": "xxe",
+          "exported": "N"
+        },
+        {
+          "local": "rIt",
+          "exported": "O"
+        },
+        {
+          "local": "qg",
+          "exported": "P"
+        },
+        {
+          "local": "NR",
+          "exported": "Q"
+        },
+        {
+          "local": "Bye",
+          "exported": "R"
+        },
+        {
+          "local": "dIt",
+          "exported": "S"
+        },
+        {
+          "local": "h9",
+          "exported": "T"
+        },
+        {
+          "local": "zq",
+          "exported": "U"
+        },
+        {
+          "local": "PKt",
+          "exported": "V"
+        },
+        {
+          "local": "tde",
+          "exported": "W"
+        },
+        {
+          "local": "_7e",
+          "exported": "X"
+        },
+        {
+          "local": "V6",
+          "exported": "Y"
+        },
+        {
+          "local": "pIt",
+          "exported": "Z"
+        },
+        {
+          "local": "bIt",
+          "exported": "_"
+        },
+        {
+          "local": "QUe",
+          "exported": "a"
+        },
+        {
+          "local": "Qu",
+          "exported": "b"
+        },
+        {
+          "local": "Av",
+          "exported": "c"
+        },
+        {
+          "local": "z_",
+          "exported": "d"
+        },
+        {
+          "local": "Ko",
+          "exported": "e"
+        },
+        {
+          "local": "LJ",
+          "exported": "f"
+        },
+        {
+          "local": "Fye",
+          "exported": "g"
+        },
+        {
+          "local": "K$",
+          "exported": "h"
+        },
+        {
+          "local": "dxe",
+          "exported": "i"
+        },
+        {
+          "local": "hxe",
+          "exported": "j"
+        },
+        {
+          "local": "n_e",
+          "exported": "k"
+        },
+        {
+          "local": "t_e",
+          "exported": "l"
+        },
+        {
+          "local": "zxe",
+          "exported": "m"
+        },
+        {
+          "local": "Pxe",
+          "exported": "n"
+        },
+        {
+          "local": "K1e",
+          "exported": "o"
+        },
+        {
+          "local": "Y1e",
+          "exported": "p"
+        },
+        {
+          "local": "BJ",
+          "exported": "q"
+        },
+        {
+          "local": "XRt",
+          "exported": "r"
+        },
+        {
+          "local": "Vy",
+          "exported": "s"
+        },
+        {
+          "local": "RRt",
+          "exported": "t"
+        },
+        {
+          "local": "F1",
+          "exported": "u"
+        },
+        {
+          "local": "M5",
+          "exported": "v"
+        },
+        {
+          "local": "X1",
+          "exported": "w"
+        },
+        {
+          "local": "qRt",
+          "exported": "x"
+        },
+        {
+          "local": "zl",
+          "exported": "y"
+        },
+        {
+          "local": "qs",
+          "exported": "z"
+        }
+      ]
+    }
+  },
+  "targetUnbundle": {
+    "goal": "将 index.js 中的业务逻辑与第三方库解耦，重建 src 模块与显式 import/export，最终不再依赖 public/restored/renderer-bundle/index.js",
+    "constraints": [
+      "无 source map：无法 100% 还原原始文件边界与命名，只能基于 bundle 模式识别与行为回归验证",
+      "index.js 内混合了 vendor 与业务代码：需要先识别模块初始化包装函数与导出表",
+      "必须保持离线：CSS 中外链必须移除或改为本地字体/资源"
+    ],
+    "phases": [
+      {
+        "name": "phase-1: 建模",
+        "steps": [
+          "从 index.js 末尾 export 列表构建符号表（exported -> local）",
+          "扫描 bundle 中的模块初始化包装（常见形态：flag + exportsObj + function getter）并建立调用图",
+          "将调用图聚类为 vendor/react、vendor/router、vendor/pixi、vendor/sentry、vendor/utils 与 app"
+        ]
+      },
+      {
+        "name": "phase-2: 抽离 vendor",
+        "steps": [
+          "用 npm 依赖替换内联库（react/react-dom/react-router-dom/pixi.js/@sentry/*/lodash*）",
+          "将 app 代码中对内联库的引用重写为标准 ESM import",
+          "保留必要 polyfill 与兼容层（如 modulepreload）"
+        ]
+      },
+      {
+        "name": "phase-3: 还原 app",
+        "steps": [
+          "把 app 逻辑按路由/状态/工具/渲染管线分层到 src 目录",
+          "为无法还原的边界添加 TODO（但保持行为一致）"
+        ]
+      },
+      {
+        "name": "phase-4: 验证",
+        "steps": [
+          "跑单测/集成校验/构建/性能门禁",
+          "用 DOM 断言或渲染输出 hash 做行为回归比对"
+        ]
+      }
+    ]
+  }
+}

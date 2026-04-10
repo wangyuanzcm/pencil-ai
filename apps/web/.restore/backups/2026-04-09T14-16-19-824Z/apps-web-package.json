@@ -1,0 +1,38 @@
+{
+  "name": "design-ai-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "restore": "node scripts/restore.mjs",
+    "sync:desktop-assets": "node scripts/sync-desktop-assets.mjs",
+    "prebuild": "pnpm sync:desktop-assets",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:integration": "node scripts/integration-check.mjs",
+    "land:assets": "node scripts/land-assets.mjs"
+  },
+  "dependencies": {
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "react-router-dom": "7.8.2",
+    "@sentry/react": "^8.29.0",
+    "pixi.js": "8.8.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.10",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "typescript": "^5.6.2",
+    "vite": "^5.2.0",
+    "vitest": "^2.1.8"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

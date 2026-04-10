@@ -1,0 +1,60 @@
+{
+  "project": "design-ai-web",
+  "version": "0.1.0",
+  "env": "production",
+  "buildTime": "2026-04-09T14:16:04.128Z",
+  "fileCount": 10,
+  "totalSize": 16631090,
+  "entries": [
+    {
+      "path": "assets/index-CpD6XMyp.js",
+      "size": 272723,
+      "md5": "f118566305b5ed73832dd6255670ab2b"
+    },
+    {
+      "path": "assets/index-CpD6XMyp.js.map",
+      "size": 1389120,
+      "md5": "48735e4d8ed451e8523541ea32b7e707"
+    },
+    {
+      "path": "desktop-assets/browserAll.js",
+      "size": 705,
+      "md5": "eb985e2ff92ee2d8f0f18b42116218f4"
+    },
+    {
+      "path": "desktop-assets/browserAll2.js",
+      "size": 43078,
+      "md5": "19d9b10ca9738250ecac478b40f37209"
+    },
+    {
+      "path": "desktop-assets/index.css",
+      "size": 141995,
+      "md5": "e34e01f3cb7674176914b4043f4c2991"
+    },
+    {
+      "path": "desktop-assets/index.js",
+      "size": 5320053,
+      "md5": "96e55a676114e2c48bff7217d3022102"
+    },
+    {
+      "path": "desktop-assets/pencil.wasm",
+      "size": 9278574,
+      "md5": "f4d5a4b8c0c2a72d1089e1a74dcc0ed7"
+    },
+    {
+      "path": "desktop-assets/webworkerAll.js",
+      "size": 835,
+      "md5": "4feefa7d402bdc3917435253b51b9633"
+    },
+    {
+      "path": "desktop-assets/webworkerAll2.js",
+      "size": 183667,
+      "md5": "dd8d7e7aa44914bc7685f86e9ecfaedc"
+    },
+    {
+      "path": "index.html",
+      "size": 340,
+      "md5": "63802e5c56903e866fa168fefe2f215e"
+    }
+  ]
+}
