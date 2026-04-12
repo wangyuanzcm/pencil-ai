@@ -2,7 +2,7 @@ import { expect, test } from 'vitest'
 import {
   applyNodeOverridePatch,
   deserializeDescendantOverrideToPatch,
-  deserializeDescendantsOverridesToPatches,
+  generateOverridesPatches,
   deserializeNodeProperties
 } from '../src/features/scenegraph'
 
@@ -17,9 +17,20 @@ test('scenegraph overrides: text content + font fields', () => {
   expect(patch.text?.textGrowth).toBe('fixed-width')
 })
 
+test('scenegraph overrides: underline/href/strikethrough/metadata are supported', () => {
+  const patch = deserializeDescendantOverrideToPatch(
+    { content: 'Hello', href: 'https://example.com', underline: true, strikethrough: 'false', metadata: { a: 1 } },
+    { nodeType: 'text' }
+  )
+  expect(patch.text?.href).toBe('https://example.com')
+  expect(patch.text?.underline).toBe(true)
+  expect(patch.text?.strikethrough).toBe(false)
+  expect((patch.text as any)?.metadata).toEqual({ a: 1 })
+})
+
 test('scenegraph overrides: layout normalization', () => {
   const patch = deserializeDescendantOverrideToPatch(
-    { layout: 'horizontal', gap: '12', padding: [1, 2], justifyContent: 'space-between', alignItems: 'flex-start', includeStroke: true },
+    { layout: 'horizontal', gap: '12', padding: [1, 2], justifyContent: 'space-between', alignItems: 'flex-start', layoutIncludeStroke: true },
     { nodeType: 'frame' }
   )
   expect(patch.layout?.mode).toBe('horizontal')
@@ -49,6 +60,51 @@ test('scenegraph overrides: fill/stroke/effect can be patched for non-text nodes
   expect((patch.fill as any)?.type).toBe('color')
   expect((patch.stroke as any)?.thickness).toBe(2)
   expect(Array.isArray(patch.effect)).toBe(true)
+})
+
+test('scenegraph overrides: nested $var can be resolved in stroke/fill/effect', () => {
+  const patch = deserializeDescendantOverrideToPatch(
+    {
+      stroke: { thickness: { top: '$t', right: '$r', bottom: '$b', left: '$l' }, fill: '$c' },
+      fill: {
+        type: 'gradient',
+        gradientType: 'linear',
+        opacity: '$op',
+        colors: [
+          { color: '$c', position: '$p0' },
+          { color: '#fff', position: 1 }
+        ]
+      },
+      effect: { type: 'blur', radius: '$rad' }
+    },
+    {
+      nodeType: 'rectangle',
+      resolveVariable: ({ name, type }) => {
+        if (type === 'number') {
+          if (name === 't') return 1
+          if (name === 'r') return 2
+          if (name === 'b') return 3
+          if (name === 'l') return 4
+          if (name === 'op') return 0.5
+          if (name === 'p0') return 0
+          if (name === 'rad') return 10
+        }
+        if (type === 'string' && name === 'c') return '#000'
+        return undefined
+      }
+    }
+  )
+
+  expect((patch.stroke as any)?.thickness?.top).toBe(1)
+  expect((patch.stroke as any)?.thickness?.left).toBe(4)
+  expect((patch.fill as any)?.opacity).toBe(0.5)
+  expect((patch.fill as any)?.colors?.[0]?.color).toBe('#000')
+  expect((patch.effect as any)?.radius).toBe(10)
+})
+
+test('scenegraph overrides: cornerRadius can be patched', () => {
+  const patch = deserializeDescendantOverrideToPatch({ cornerRadius: 12 }, { nodeType: 'rectangle' })
+  expect(patch.cornerRadius).toBe(12)
 })
 
 test('scenegraph overrides: width/height variable refs are skipped without resolver', () => {
@@ -98,10 +154,10 @@ test('scenegraph overrides: patch can be applied to deserialized node properties
 })
 
 test('scenegraph overrides: descendants map can be converted to patches by path', () => {
-  const patches = deserializeDescendantsOverridesToPatches({
-    descendants: { 'a/b': { content: 'Hello' }, 'x': 123 },
-    getNodeTypeForPath: () => 'text'
-  })
+  const patches = generateOverridesPatches(
+    { 'a/b': { content: 'Hello' }, 'x': 123 },
+    () => 'text'
+  )
   expect(patches['a/b']?.text?.content).toBe('Hello')
   expect(patches['x']).toBeUndefined()
 })

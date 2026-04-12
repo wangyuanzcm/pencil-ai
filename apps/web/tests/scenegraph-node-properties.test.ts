@@ -25,6 +25,25 @@ test('scenegraph node-properties: text fields are extracted for text-like nodes'
   expect(props.text?.textGrowth).toBe('fixed-width')
 })
 
+test('scenegraph node-properties: context/theme and text metadata fields are passed through', () => {
+  const props = deserializeNodeProperties({
+    type: 'text',
+    content: 'hello',
+    context: { foo: 1 },
+    theme: { bar: 2 },
+    href: 'https://example.com',
+    underline: true,
+    strikethrough: false,
+    metadata: { baz: 3 }
+  })
+  expect(props.context).toEqual({ foo: 1 })
+  expect(props.theme).toEqual({ bar: 2 })
+  expect(props.text?.href).toBe('https://example.com')
+  expect(props.text?.underline).toBe(true)
+  expect(props.text?.strikethrough).toBe(false)
+  expect((props.text as any)?.metadata).toEqual({ baz: 3 })
+})
+
 test('scenegraph node-properties: layout fields are normalized', () => {
   const props = deserializeNodeProperties({
     type: 'frame',
@@ -44,6 +63,15 @@ test('scenegraph node-properties: layout fields are normalized', () => {
   expect(props.layout?.alignItems).toBe('start')
   expect(props.layout?.includeStroke).toBe(true)
   expect(props.layoutPosition).toBe('absolute')
+})
+
+test('scenegraph node-properties: layoutIncludeStroke is supported as alias', () => {
+  const props = deserializeNodeProperties({
+    type: 'frame',
+    layout: 'horizontal',
+    layoutIncludeStroke: true
+  })
+  expect(props.layout?.includeStroke).toBe(true)
 })
 
 test('scenegraph node-properties: icon_font includes weight and fill', () => {
@@ -74,6 +102,22 @@ test('scenegraph node-properties: fill/stroke/effect are validated and passed th
 test('scenegraph node-properties: invalid fill is ignored', () => {
   const props = deserializeNodeProperties({ type: 'rectangle', fill: { type: 'color' } as any })
   expect(props.fill).toBeUndefined()
+})
+
+test('scenegraph node-properties: invalid shadow effect is ignored', () => {
+  const props = deserializeNodeProperties({
+    type: 'rectangle',
+    effect: { type: 'shadow', offset: { x: {}, y: 1 } } as any
+  })
+  expect(props.effect).toBeUndefined()
+})
+
+test('scenegraph node-properties: geometry is constrained (string ok, number ignored)', () => {
+  const ok = deserializeNodeProperties({ type: 'path', geometry: 'M0 0L1 1' })
+  expect(ok.geometry).toBe('M0 0L1 1')
+
+  const bad = deserializeNodeProperties({ type: 'path', geometry: 123 as any })
+  expect(bad.geometry).toBeUndefined()
 })
 
 test('scenegraph node-properties: override serialized keys can be collected from property keys', () => {

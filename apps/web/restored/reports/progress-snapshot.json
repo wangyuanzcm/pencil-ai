@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-11T00:51:30.000Z",
+  "generatedAt": "2026-04-11T18:10:30.000Z",
   "project": "design-ai-web",
   "status": "in_progress",
   "goal": "将 desktop renderer 的 index.js 巨型 bundle 解包为可维护的 src 模块，并逐块把内联 vendor 替换为 npm 依赖导入，保持 typecheck/test/build/perf 回归门禁通过",
@@ -65,6 +65,26 @@
       { "category": "pixi", "covered": false }
     ]
   },
+  "reportsAndArtifacts": {
+    "layout": "apps/web/restored/reports/unbundle-unbundled-safe-layout.json",
+    "unbundlePlan": "apps/web/restored/reports/unbundle-plan.json",
+    "unbundleScan": "apps/web/restored/reports/unbundle-scan.json",
+    "unbundleExports": "apps/web/restored/reports/unbundle-exports.json",
+    "migrationManifest": "apps/web/restored/reports/migration-manifest.json",
+    "diffReport": "apps/web/restored/reports/diff-report.json",
+    "unitTestReport": "apps/web/restored/reports/unit-test-report.json",
+    "perfBaseline": "apps/web/perf-baseline.json"
+  },
+  "qualityGates": {
+    "commands": [
+      "pnpm --filter design-ai-web unbundle:build-src-safe",
+      "pnpm --filter design-ai-web typecheck",
+      "pnpm --filter design-ai-web test",
+      "pnpm --filter design-ai-web build",
+      "pnpm --filter design-ai-web perf:check"
+    ],
+    "lastKnownState": "passed"
+  },
   "businessRestoration": [
     {
       "area": "scenegraph.document.upgrade",
@@ -116,7 +136,7 @@
       "newModules": ["apps/web/src/features/scenegraph/document/value.ts"],
       "exportsFromFeatureEntry": "apps/web/src/features/scenegraph/index.ts",
       "notes": [
-        "将 chunk-004/chunk-009 中的属性值层规则抽为纯函数：rotation 的 sign-flip deg<->rad、sizing 的 fit_content/fill_container fallback 序列化规则，并补齐 fill/stroke/effect 的序列化结构类型（不引入渲染依赖）"
+        "将 chunk-004/chunk-009 中的属性值层规则抽为纯函数：rotation 的 sign-flip deg<->rad、sizing 的 fit_content/fill_container fallback 序列化规则，并补齐 fill/stroke/effect 的序列化结构类型与更严格的结构校验（不引入渲染依赖）"
       ],
       "tests": ["apps/web/tests/scenegraph-value.test.ts"]
     },
@@ -125,42 +145,29 @@
       "newModules": ["apps/web/src/features/scenegraph/document/node-properties.ts"],
       "exportsFromFeatureEntry": "apps/web/src/features/scenegraph/index.ts",
       "notes": [
-        "扩展 v2.10 序列化节点反序列化的纯函数覆盖：width/height 的 sizing 行为、rotation deg->rad（sign-flip）、opacity、text/note/prompt/context 文本字段、layout（layout/gap/padding/justifyContent/alignItems/includeStroke）与 layoutPosition、icon_font（weight/fill）、path（fillRule），并补齐 fill/stroke/effect 的结构校验与透传（不引入渲染依赖），提供 override key 收集辅助函数"
+        "扩展 v2.10 序列化节点反序列化的纯函数覆盖：width/height 的 sizing 行为、rotation deg->rad（sign-flip）、opacity、text/note/prompt/context 文本字段、layout（layout/gap/padding/justifyContent/alignItems/includeStroke/layoutIncludeStroke）与 layoutPosition、icon_font（weight/fill）、path（fillRule），并补齐 fill/stroke/effect 的结构校验与透传（不引入渲染依赖），提供 override key 收集辅助函数；支持 context/theme 与 text 的 href/underline/strikethrough/metadata 透传"
       ],
       "tests": ["apps/web/tests/scenegraph-node-properties.test.ts"]
     },
     {
       "area": "scenegraph.document.overrides",
-      "newModules": ["apps/web/src/features/scenegraph/document/overrides.ts"],
+      "newModules": [
+        "apps/web/src/features/scenegraph/document/overrides.ts",
+        "apps/web/src/features/scenegraph/document/override-applier.ts"
+      ],
       "exportsFromFeatureEntry": "apps/web/src/features/scenegraph/index.ts",
       "notes": [
-        "引入 ref.descendants 的 overrides 解析纯函数：将 descendants 的序列化键（content/layout/gap/padding/weight/fill/stroke/effect/geometry 等）反序列化为可合并的 properties patch，并提供 patch 应用/批量应用与 descendants->patches 的转换工具；支持可选变量解析器（$var），并对 width/height 的变量引用提供可解析路径"
+        "引入 ref.descendants 的 overrides 解析纯函数：将 descendants 的序列化键（content/layout/gap/padding/weight/fill/stroke/effect/geometry 等）反序列化为可合并的 properties patch，并提供 patch 应用/批量应用与 descendants->patches 的转换工具；支持可选变量解析器（$var），并对 width/height 的变量引用提供可解析路径；支持 layoutIncludeStroke 别名与 cornerRadius/polygonCount/ellipse* 等基础数值字段；支持 context/theme 与 text 的 href/underline/strikethrough/metadata；并补齐 $var 在 fill/stroke/effect 内部（如 thickness 四边、gradient 参数）的深层解析",
+        "将 overrides 的 patch 应用接入实例/ref.descendants 的运行时流水线：对 chunk-009 的 Oj/mV 增加 fill/stroke/effect/geometry 的结构校验，避免无效 override/几何数据进入运行时属性"
       ],
-      "tests": ["apps/web/tests/scenegraph-overrides.test.ts"]
+      "tests": [
+        "apps/web/tests/scenegraph-overrides.test.ts",
+        "apps/web/tests/scenegraph-override-applier.test.ts"
+      ]
     }
   ],
-  "reportsAndArtifacts": {
-    "layout": "apps/web/restored/reports/unbundle-unbundled-safe-layout.json",
-    "unbundlePlan": "apps/web/restored/reports/unbundle-plan.json",
-    "unbundleScan": "apps/web/restored/reports/unbundle-scan.json",
-    "unbundleExports": "apps/web/restored/reports/unbundle-exports.json",
-    "migrationManifest": "apps/web/restored/reports/migration-manifest.json",
-    "diffReport": "apps/web/restored/reports/diff-report.json",
-    "unitTestReport": "apps/web/restored/reports/unit-test-report.json",
-    "perfBaseline": "apps/web/perf-baseline.json"
-  },
-  "qualityGates": {
-    "commands": [
-      "pnpm --filter design-ai-web unbundle:build-src-safe",
-      "pnpm --filter design-ai-web typecheck",
-      "pnpm --filter design-ai-web test",
-      "pnpm --filter design-ai-web build",
-      "pnpm --filter design-ai-web perf:check"
-    ],
-    "lastKnownState": "passed"
-  },
   "nextSteps": [
-    "继续业务还原：将 overrides 的 patch 应用接入实例/ref.descendants 的运行时流水线（chunk-009 的 Oj/related），优先保持变量引用（$var）语义一致，并以单测锁住关键分支",
+    "继续业务还原：进一步让 Oj 支持 text 的 underline/href/metadata/strikethrough（需要同时确认底层属性系统是否存在对应字段，避免无效写入）",
     "保持门禁：每步都跑 typecheck/test/build/perf，并更新本快照"
   ]
 }

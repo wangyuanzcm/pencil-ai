@@ -48,8 +48,12 @@ export {
 export { collectSerializedOverrideKeysFromPropertyKeys, deserializeNodeProperties, deserializeSizing } from './document/node-properties'
 
 export {
+  deserializeDescendantOverrideToPatch
+} from './document/overrides'
+
+export {
+  applyOverridesToNode,
   applyNodeOverridePatch,
   applyNodeOverridePatches,
-  deserializeDescendantOverrideToPatch,
-  deserializeDescendantsOverridesToPatches
-} from './document/overrides'
+  generateOverridesPatches
+} from './document/override-applier'

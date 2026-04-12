@@ -222,6 +222,45 @@ function externalizeScenegraphUri(body, file) {
   }
 }
 
+function patchScenegraphOverrideRuntime(body, file) {
+  if (!/function Oj\(t,e,n,r,i=a=>a,o=a=>a,s\)\{/.test(body)) return { body, extraImports: [] }
+
+  const valueModule = path.join(webDir, 'src', 'features', 'scenegraph', 'document', 'value.ts')
+  const rel = relImport(file, valueModule)
+
+  let out = body
+
+  out = out.replace(
+    /case"fill":\{\(h\?\?\(h=\{\}\)\)\.fills=eA\(r,g\);break\}/g,
+    'case"fill":{if(isSerializedFill(g))(h??(h={})).fills=eA(r,g);else{s==null||s("fill"),ct.warn("Invalid override fill")}break}'
+  )
+  out = out.replace(
+    /case"stroke":\{q3e\(r,h\?\?\(h=\{\}\),g\);break\}/g,
+    'case"stroke":{if(isSerializedStroke(g))q3e(r,h??(h={}),g);else{s==null||s("stroke"),ct.warn("Invalid override stroke")}break}'
+  )
+  out = out.replace(
+    /case"effect":\{\(h\?\?\(h=\{\}\)\)\.effects=SC\(r,g\);break\}/g,
+    'case"effect":{if(isSerializedEffect(g))(h??(h={})).effects=SC(r,g);else{s==null||s("effect"),ct.warn("Invalid override effect")}break}'
+  )
+  out = out.replace(
+    /case"geometry":\{\(h\?\?\(h=\{\}\)\)\.pathData=g;break\}/g,
+    'case"geometry":{if(isSerializedGeometry(g))(h??(h={})).pathData=g;else{s==null||s("geometry"),ct.warn("Invalid override geometry")}break}'
+  )
+
+  out = out.replace(
+    /t\.type==="path"&&\(r\.pathData=t\.geometry,r\.fillRule=t\.fillRule\)/g,
+    't.type==="path"&&(isSerializedGeometry(t.geometry)&&(r.pathData=t.geometry),r.fillRule=t.fillRule)'
+  )
+
+  const didChange = out !== body
+  return {
+    body: out,
+    extraImports: didChange
+      ? [`import { isSerializedEffect, isSerializedFill, isSerializedGeometry, isSerializedStroke } from "${rel}"`]
+      : []
+  }
+}
+
 class UnionFind {
   constructor(n) {
     this.p = Array.from({ length: n }, (_, i) => i)
@@ -418,7 +457,8 @@ for (const f of files) {
   const reactCore = externalizeReactCore(reactDomClient.body)
   const reactDom = externalizeReactDom(reactCore.body)
   const scenegraphUri = externalizeScenegraphUri(reactDom.body, file)
-  body = scenegraphUri.body
+  const scenegraphOverrideRuntime = patchScenegraphOverrideRuntime(scenegraphUri.body, file)
+  body = scenegraphOverrideRuntime.body
 
   body = rewriteRootRelativeImports(body, file, outDir)
 
@@ -437,7 +477,8 @@ for (const f of files) {
     ...reactDomClient.extraImports,
     ...reactCore.extraImports,
     ...reactDom.extraImports,
-    ...scenegraphUri.extraImports
+    ...scenegraphUri.extraImports,
+    ...scenegraphOverrideRuntime.extraImports
   ]
   const importBlock = (extraImports.length ? extraImports.join('\n') + '\n' : '') + buildImportBlock(deps, file)
 

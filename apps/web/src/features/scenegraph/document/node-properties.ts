@@ -2,6 +2,7 @@ import {
   deserializeRotationDegreesToRadians,
   isSerializedEffect,
   isSerializedFill,
+  isSerializedGeometry,
   isSerializedStroke,
   parseSizingValue,
   type ParsedSizingValue,
@@ -20,6 +21,8 @@ export type SerializedSceneNodeLike = {
   type: NodeType | string
   id?: string
   name?: string
+  context?: unknown
+  theme?: Record<string, unknown>
   enabled?: boolean
   x?: number
   y?: number
@@ -35,6 +38,7 @@ export type SerializedSceneNodeLike = {
   justifyContent?: string
   alignItems?: string
   includeStroke?: boolean
+  layoutIncludeStroke?: boolean
   layoutPosition?: string
   width?: number | string
   height?: number | string
@@ -43,11 +47,20 @@ export type SerializedSceneNodeLike = {
   effect?: SerializedEffect
   geometry?: unknown
   fillRule?: string
+  cornerRadius?: number | string
+  polygonCount?: number | string
+  innerRadius?: number | string
+  startAngle?: number | string
+  sweepAngle?: number | string
   iconFontName?: string
   iconFontFamily?: string
   weight?: number | string
 
   content?: string
+  href?: string
+  underline?: boolean
+  strikethrough?: boolean
+  metadata?: unknown
   fontFamily?: string
   fontSize?: number
   fontWeight?: string
@@ -63,6 +76,8 @@ export type DeserializedSizing = { value: number; behavior: SizingBehavior }
 
 export type DeserializedNodeProperties = {
   name?: string
+  context?: unknown
+  theme?: Record<string, unknown>
   enabled: boolean
   x: number
   y: number
@@ -87,6 +102,11 @@ export type DeserializedNodeProperties = {
   stroke?: SerializedStroke
   effect?: SerializedEffect
   geometry?: unknown
+  cornerRadius?: number
+  polygonCount?: number
+  ellipseInnerRadius?: number
+  ellipseStartAngle?: number
+  ellipseSweepAngle?: number
   icon?: {
     iconFontName?: string
     iconFontFamily?: string
@@ -98,6 +118,10 @@ export type DeserializedNodeProperties = {
   }
   text?: {
     content: string
+    href?: string
+    underline?: boolean
+    strikethrough?: boolean
+    metadata?: unknown
     fontFamily?: string
     fontSize?: number
     fontWeight?: string
@@ -256,6 +280,8 @@ export function deserializeNodeProperties(node: SerializedSceneNodeLike): Deseri
 
   const out: DeserializedNodeProperties = {
     name: node.name,
+    context: node.context,
+    theme: node.theme,
     enabled: node.enabled ?? true,
     x: node.x ?? 0,
     y: node.y ?? 0,
@@ -273,7 +299,12 @@ export function deserializeNodeProperties(node: SerializedSceneNodeLike): Deseri
   if (node.fill !== undefined && isSerializedFill(node.fill)) out.fill = node.fill
   if (node.stroke !== undefined && isSerializedStroke(node.stroke)) out.stroke = node.stroke
   if (node.effect !== undefined && isSerializedEffect(node.effect)) out.effect = node.effect
-  if (node.geometry !== undefined) out.geometry = node.geometry
+  if (node.geometry !== undefined && isSerializedGeometry(node.geometry)) out.geometry = node.geometry
+  if (node.cornerRadius !== undefined) out.cornerRadius = parseNumberOrUndefined(node.cornerRadius)
+  if (node.polygonCount !== undefined) out.polygonCount = parseNumberOrUndefined(node.polygonCount)
+  if (node.innerRadius !== undefined) out.ellipseInnerRadius = parseNumberOrUndefined(node.innerRadius)
+  if (node.startAngle !== undefined) out.ellipseStartAngle = parseNumberOrUndefined(node.startAngle)
+  if (node.sweepAngle !== undefined) out.ellipseSweepAngle = parseNumberOrUndefined(node.sweepAngle)
 
   const layoutMode = normalizeLayoutMode(node.layout)
   if (layoutMode !== 'none') {
@@ -283,7 +314,7 @@ export function deserializeNodeProperties(node: SerializedSceneNodeLike): Deseri
       padding: normalizePadding(node.padding),
       justifyContent: normalizeJustifyContent(node.justifyContent),
       alignItems: normalizeAlignItems(node.alignItems),
-      includeStroke: node.includeStroke ?? false
+      includeStroke: node.includeStroke ?? node.layoutIncludeStroke ?? false
     }
   }
 
@@ -303,6 +334,10 @@ export function deserializeNodeProperties(node: SerializedSceneNodeLike): Deseri
   if (node.type === 'text' || node.type === 'note' || node.type === 'prompt' || node.type === 'context') {
     out.text = {
       content: typeof node.content === 'string' ? node.content : '',
+      href: node.href,
+      underline: node.underline,
+      strikethrough: node.strikethrough,
+      metadata: node.metadata,
       fontFamily: node.fontFamily,
       fontSize: node.fontSize,
       fontWeight: node.fontWeight,

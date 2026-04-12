@@ -1,4 +1,11 @@
-import { deserializeRotationDegreesToRadians, isSerializedEffect, isSerializedFill, isSerializedStroke, type SizingBehavior } from './value'
+import {
+  deserializeRotationDegreesToRadians,
+  isSerializedEffect,
+  isSerializedFill,
+  isSerializedGeometry,
+  isSerializedStroke,
+  type SizingBehavior
+} from './value'
 import { deserializeSizing, type DeserializedNodeProperties, type SerializedSceneNodeLike } from './node-properties'
 
 export type OverrideVariableType = 'number' | 'boolean' | 'string'
@@ -7,6 +14,8 @@ export type OverrideVariableResolver = (args: { name: string; type: OverrideVari
 export type DeserializedNodeOverridePatch = Partial<
   Pick<
     DeserializedNodeProperties,
+    | 'context'
+    | 'theme'
     | 'name'
     | 'enabled'
     | 'x'
@@ -24,6 +33,11 @@ export type DeserializedNodeOverridePatch = Partial<
     | 'stroke'
     | 'effect'
     | 'geometry'
+    | 'cornerRadius'
+    | 'polygonCount'
+    | 'ellipseInnerRadius'
+    | 'ellipseStartAngle'
+    | 'ellipseSweepAngle'
     | 'text'
     | 'layout'
     | 'icon'
@@ -43,25 +57,26 @@ function defaultSizingBehaviorForNodeType(type: string): { horizontal: SizingBeh
 
 function resolveBoolean(input: unknown, resolveVariable: OverrideVariableResolver | undefined): boolean | undefined {
   if (input === undefined) return undefined
+  if (typeof input === 'string' && input.startsWith('$')) {
+    const v = resolveVariable?.({ name: input.substring(1), type: 'boolean' })
+    return typeof v === 'boolean' ? v : undefined
+  }
   if (typeof input === 'boolean') return input
   if (typeof input === 'string') {
-    if (input.startsWith('$')) {
-      const v = resolveVariable?.({ name: input.substring(1), type: 'boolean' })
-      return typeof v === 'boolean' ? v : v === undefined ? undefined : Boolean(v)
-    }
-    return input !== 'false'
+    if (input === 'true') return true
+    if (input === 'false') return false
   }
   return undefined
 }
 
 function resolveNumber(input: unknown, resolveVariable: OverrideVariableResolver | undefined): number | undefined {
   if (input === undefined) return undefined
-  if (typeof input === 'number') return Number.isFinite(input) ? input : undefined
+  if (typeof input === 'string' && input.startsWith('$')) {
+    const v = resolveVariable?.({ name: input.substring(1), type: 'number' })
+    return typeof v === 'number' ? v : undefined
+  }
+  if (typeof input === 'number') return input
   if (typeof input === 'string') {
-    if (input.startsWith('$')) {
-      const v = resolveVariable?.({ name: input.substring(1), type: 'number' })
-      return typeof v === 'number' && Number.isFinite(v) ? v : undefined
-    }
     const n = Number.parseFloat(input)
     return Number.isFinite(n) ? n : undefined
   }
@@ -70,15 +85,87 @@ function resolveNumber(input: unknown, resolveVariable: OverrideVariableResolver
 
 function resolveString(input: unknown, resolveVariable: OverrideVariableResolver | undefined): string | undefined {
   if (input === undefined) return undefined
-  if (typeof input === 'string') {
-    if (input.startsWith('\\$')) return input.substring(2)
-    if (input.startsWith('$')) {
-      const v = resolveVariable?.({ name: input.substring(1), type: 'string' })
-      return typeof v === 'string' ? v : undefined
-    }
-    return input
+  if (typeof input === 'string' && input.startsWith('$')) {
+    const v = resolveVariable?.({ name: input.substring(1), type: 'string' })
+    return typeof v === 'string' ? v : undefined
   }
+  if (typeof input === 'string') return input
   return undefined
+}
+
+const deepResolveNumberKeys = new Set([
+  'opacity',
+  'rotation',
+  'radius',
+  'position',
+  'x',
+  'y',
+  'width',
+  'height',
+  'blur',
+  'spread',
+  'gap',
+  'thickness',
+  'top',
+  'right',
+  'bottom',
+  'left',
+  'fontSize',
+  'letterSpacing',
+  'lineHeight',
+  'cornerRadius',
+  'polygonCount',
+  'innerRadius',
+  'startAngle',
+  'sweepAngle',
+  'weight'
+])
+
+const deepResolveBooleanKeys = new Set(['enabled', 'includeStroke', 'layoutIncludeStroke', 'underline', 'strikethrough'])
+
+const deepResolveStringKeys = new Set([
+  'color',
+  'url',
+  'blendMode',
+  'gradientType',
+  'mode',
+  'shadowType',
+  'fillRule',
+  'href',
+  'fontFamily',
+  'fontWeight',
+  'fontStyle',
+  'iconFontName',
+  'iconFontFamily'
+])
+
+function deepResolveVariables(value: unknown, resolveVariable: OverrideVariableResolver | undefined): unknown {
+  if (!resolveVariable) return value
+  if (Array.isArray(value)) return value.map(v => deepResolveVariables(v, resolveVariable))
+  if (typeof value !== 'object' || value === null) return value
+
+  const out: Record<string, unknown> = {}
+  for (const [key, raw] of Object.entries(value as Record<string, unknown>)) {
+    if (typeof raw === 'string' && raw.startsWith('$') && key !== 'type') {
+      if (deepResolveNumberKeys.has(key)) {
+        const v = resolveVariable({ name: raw.substring(1), type: 'number' })
+        out[key] = typeof v === 'number' && Number.isFinite(v) ? v : raw
+        continue
+      }
+      if (deepResolveBooleanKeys.has(key)) {
+        const v = resolveVariable({ name: raw.substring(1), type: 'boolean' })
+        out[key] = typeof v === 'boolean' ? v : raw
+        continue
+      }
+      if (deepResolveStringKeys.has(key)) {
+        const v = resolveVariable({ name: raw.substring(1), type: 'string' })
+        out[key] = typeof v === 'string' ? v : raw
+        continue
+      }
+    }
+    out[key] = deepResolveVariables(raw, resolveVariable)
+  }
+  return out
 }
 
 function normalizePadding(
@@ -192,6 +279,11 @@ export function deserializeDescendantOverrideToPatch(
   const sizingDefaults = defaultSizingBehaviorForNodeType(nodeType)
   const patch: DeserializedNodeOverridePatch = {}
 
+  if (override.context !== undefined) patch.context = override.context
+  if (override.theme !== undefined && typeof override.theme === 'object' && override.theme !== null && !Array.isArray(override.theme)) {
+    patch.theme = override.theme as Record<string, unknown>
+  }
+
   const name = resolveString(override.name, resolveVariable)
   if (name !== undefined) patch.name = name
 
@@ -237,17 +329,45 @@ export function deserializeDescendantOverrideToPatch(
     } else patch.height = deserializeSizing(h as any, sizingDefaults.vertical)
   }
 
-  if (override.fill !== undefined && isSerializedFill(override.fill)) patch.fill = override.fill
-  if (override.stroke !== undefined && isSerializedStroke(override.stroke)) patch.stroke = override.stroke
-  if (override.effect !== undefined && isSerializedEffect(override.effect)) patch.effect = override.effect
-  if (override.geometry !== undefined) patch.geometry = override.geometry
+  if (override.fill !== undefined) {
+    const resolved = deepResolveVariables(override.fill, resolveVariable)
+    if (isSerializedFill(resolved)) patch.fill = resolved
+  }
+
+  if (override.stroke !== undefined) {
+    const resolved = deepResolveVariables(override.stroke, resolveVariable)
+    if (isSerializedStroke(resolved)) patch.stroke = resolved
+  }
+
+  if (override.effect !== undefined) {
+    const resolved = deepResolveVariables(override.effect, resolveVariable)
+    if (isSerializedEffect(resolved)) patch.effect = resolved
+  }
+
+  if (override.geometry !== undefined && isSerializedGeometry(override.geometry)) patch.geometry = override.geometry
+
+  const cornerRadius = resolveNumber(override.cornerRadius, resolveVariable)
+  if (cornerRadius !== undefined) patch.cornerRadius = cornerRadius
+
+  const polygonCount = resolveNumber(override.polygonCount, resolveVariable)
+  if (polygonCount !== undefined) patch.polygonCount = polygonCount
+
+  const innerRadius = resolveNumber(override.innerRadius, resolveVariable)
+  if (innerRadius !== undefined) patch.ellipseInnerRadius = innerRadius
+
+  const startAngle = resolveNumber(override.startAngle, resolveVariable)
+  if (startAngle !== undefined) patch.ellipseStartAngle = startAngle
+
+  const sweepAngle = resolveNumber(override.sweepAngle, resolveVariable)
+  if (sweepAngle !== undefined) patch.ellipseSweepAngle = sweepAngle
 
   const layoutMode = normalizeLayoutMode(override.layout)
   const gap = resolveNumber(override.gap, resolveVariable)
   const padding = normalizePadding(override.padding as any, resolveVariable)
   const justifyContent = normalizeJustifyContent(override.justifyContent)
   const alignItems = normalizeAlignItems(override.alignItems)
-  const includeStroke = resolveBoolean(override.includeStroke, resolveVariable)
+  const includeStroke =
+    resolveBoolean(override.includeStroke, resolveVariable) ?? resolveBoolean(override.layoutIncludeStroke, resolveVariable)
 
   if (
     layoutMode !== undefined ||
@@ -274,6 +394,17 @@ export function deserializeDescendantOverrideToPatch(
   if (content !== undefined) {
     patch.text = { ...(patch.text ?? { content: '' }), content }
   }
+
+  const href = resolveString(override.href, resolveVariable)
+  if (href !== undefined) patch.text = { ...(patch.text ?? { content: '' }), href }
+
+  const underline = resolveBoolean(override.underline, resolveVariable)
+  if (underline !== undefined) patch.text = { ...(patch.text ?? { content: '' }), underline }
+
+  const strikethrough = resolveBoolean(override.strikethrough, resolveVariable)
+  if (strikethrough !== undefined) patch.text = { ...(patch.text ?? { content: '' }), strikethrough }
+
+  if (override.metadata !== undefined) patch.text = { ...(patch.text ?? { content: '' }), metadata: override.metadata }
 
   const fontFamily = resolveString(override.fontFamily, resolveVariable)
   if (fontFamily !== undefined) patch.text = { ...(patch.text ?? { content: '' }), fontFamily }
@@ -306,72 +437,11 @@ export function deserializeDescendantOverrideToPatch(
       iconFontName,
       iconFontFamily,
       iconFontWeight,
-      fill: override.fill !== undefined && isSerializedFill(override.fill) ? override.fill : undefined
+      fill: patch.fill
     }
   }
 
   if (override.fillRule !== undefined && typeof override.fillRule === 'string') patch.path = { fillRule: override.fillRule }
 
   return patch
-}
-
-export function applyNodeOverridePatch(base: DeserializedNodeProperties, patch: DeserializedNodeOverridePatch): DeserializedNodeProperties {
-  const mergedText =
-    patch.text === undefined
-      ? base.text
-      : {
-          ...(base.text ?? { content: '' }),
-          ...patch.text,
-          content: (patch.text as any)?.content ?? base.text?.content ?? ''
-        }
-
-  const mergedLayout =
-    patch.layout === undefined
-      ? base.layout
-      : {
-          ...(base.layout ?? {
-            mode: 'none' as const,
-            gap: 0,
-            justifyContent: 'start' as const,
-            alignItems: 'start' as const,
-            includeStroke: false
-          }),
-          ...patch.layout
-        }
-
-  const mergedIcon = patch.icon === undefined ? base.icon : { ...(base.icon ?? {}), ...patch.icon }
-  const mergedPath = patch.path === undefined ? base.path : { ...(base.path ?? {}), ...patch.path }
-
-  return {
-    ...base,
-    ...patch,
-    width: patch.width ?? base.width,
-    height: patch.height ?? base.height,
-    text: mergedText,
-    layout: mergedLayout,
-    icon: mergedIcon,
-    path: mergedPath
-  }
-}
-
-export function applyNodeOverridePatches(base: DeserializedNodeProperties, patches: DeserializedNodeOverridePatch[]) {
-  let out = base
-  for (const p of patches) out = applyNodeOverridePatch(out, p)
-  return out
-}
-
-export function deserializeDescendantsOverridesToPatches(args: {
-  descendants: Record<string, unknown>
-  getNodeTypeForPath: (path: string) => string
-  resolveVariable?: OverrideVariableResolver
-}) {
-  const out: Record<string, DeserializedNodeOverridePatch> = {}
-  for (const [path, value] of Object.entries(args.descendants)) {
-    if (!value || typeof value !== 'object' || Array.isArray(value)) continue
-    out[path] = deserializeDescendantOverrideToPatch(value as Record<string, unknown>, {
-      nodeType: args.getNodeTypeForPath(path),
-      resolveVariable: args.resolveVariable
-    })
-  }
-  return out
 }
